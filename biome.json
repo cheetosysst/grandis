@@ -1,0 +1,23 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.5.1/schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"nursery": {
+				"useGroupedTypeImport": "warn",
+				"noUnusedImports": "error"
+			}
+		},
+		"include": ["src"],
+		"ignore": ["node_modules"]
+	},
+	"formatter": {
+		"indentWidth": 4,
+		"indentStyle": "tab",
+		"include": ["index.ts", "src/"]
+	}
+}
