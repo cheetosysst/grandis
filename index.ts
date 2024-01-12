@@ -1,9 +1,7 @@
 import { plugin } from "bun";
-import mdx from "@mdx-js/esbuild";
-
-declare global {
-	const Html: typeof import("@kitajs/html/index");
-}
+import mdxLoader from "./src/plugins/mdx";
+// import mdx from "@mdx-js/esbuild";
+import "@kitajs/html/register";
 
 const argv = Bun.argv;
 const task = argv.at(2);
@@ -15,7 +13,7 @@ if (task == null) {
 
 const tasks: Record<string, { file: string }> = {
 	dev: {
-		file: "./src/dev.ts",
+		file: "./src/dev.tsx",
 	},
 };
 
@@ -25,12 +23,8 @@ if (!(task in tasks)) {
 	);
 }
 
-plugin(
-	// @ts-ignore
-	mdx({
-		jsxRuntime: undefined,
-	}),
-);
+// plugin(mdx());
+plugin(mdxLoader);
 
 import(tasks[task].file)
 	.then((mod) => mod.default())
