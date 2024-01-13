@@ -1,36 +1,34 @@
 import type { BunFile, BunPlugin, OnLoadArgs, OnLoadResult } from "bun";
 import path from "path";
 import { evaluate } from "@mdx-js/mdx";
-import { Html } from "@kitajs/html";
+import { Html, type PropsWithChildren } from "@kitajs/html";
+import { parseTextToHtml } from "./mdxUtil";
 
-function parseContent(file: BunFile) {
+function jsxHandler(
+	type: unknown,
+	props: PropsWithChildren,
+	key: string | undefined,
+) {
+	// biome-ignore lint/complexity/noBannedTypes: `type` is unknown
+	return Html.createElement(type as string | Function, props, props.children);
+}
+
+async function parseContent(file: BunFile) {
 	const pathData = path.parse(String(file.name));
 
-	// if (pathData.ext === ".txt") {
-	// 	return "";
-	// }
+	if (pathData.ext === ".txt") {
+		const content = await file.text();
+		return {
+			default: parseTextToHtml(content),
+		};
+	}
 
 	if (pathData.ext === ".md" || pathData.ext === ".mdx") {
 		const content = file.text().then((text) => {
-			console.log({ text });
 			return evaluate(text, {
 				Fragment: Html.Fragment,
-				jsx: (type, props, key) => {
-					return Html.createElement(
-						// biome-ignore lint/complexity/noBannedTypes: <explanation>
-						type as string | Function,
-						props,
-						props.children,
-					);
-				},
-				jsxs: (type, props, key) => {
-					return Html.createElement(
-						// biome-ignore lint/complexity/noBannedTypes: <explanation>
-						type as string | Function,
-						props,
-						props.children,
-					);
-				},
+				jsx: jsxHandler,
+				jsxs: jsxHandler,
 			});
 		});
 		return content;
@@ -50,13 +48,10 @@ async function loadFile(pathname: string) {
 }
 
 async function onLoad(arg: OnLoadArgs) {
-	const exports = {};
-
 	const fileData = await loadFile(arg.path);
 
 	const content = await parseContent(fileData);
-	// console.log(content.default());
-	// String(content.toString());
+
 	return {
 		exports: content,
 		loader: "object",
