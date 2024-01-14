@@ -21,17 +21,17 @@ async function dev() {
 	console.log(<ComponentMd />);
 
 	const fileText = Bun.file(
-		path.join(process.cwd(), "content", "text.html")
+		path.join(process.cwd(), "out", "text.html")
 	).writer();
 	fileText.write(contentText);
 	fileText.end();
 	const fileMdx = Bun.file(
-		path.join(process.cwd(), "content", "mdx.html")
+		path.join(process.cwd(), "out", "mdx.html")
 	).writer();
 	fileMdx.write(contentMdx);
 	fileMdx.end();
 	const fileMd = Bun.file(
-		path.join(process.cwd(), "content", "md.html")
+		path.join(process.cwd(), "out", "md.html")
 	).writer();
 	fileMd.write(contentMd);
 	fileMd.end();

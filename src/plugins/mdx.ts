@@ -2,7 +2,7 @@ import type { BunFile, BunPlugin, OnLoadArgs, OnLoadResult } from "bun";
 import path from "path";
 import { evaluate } from "@mdx-js/mdx";
 import { Html, type PropsWithChildren } from "@kitajs/html";
-import { parseTextToHtml } from "./mdxUtil";
+import { parseTextToHtml } from "../util/mdx";
 
 function jsxHandler(
 	type: unknown,
