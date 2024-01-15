@@ -10,7 +10,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.5.1",
-		"@mdx-js/esbuild": "^3.0.0",
 		"@mdx-js/mdx": "^3.0.0",
 		"@types/bun": "latest",
 		"@types/mdx": "^2.0.10"

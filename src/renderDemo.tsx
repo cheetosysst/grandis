@@ -7,13 +7,13 @@ async function dev() {
 	console.log("🛠️  Running dev mode");
 
 	const ComponentText = (
-		await import(path.join(process.cwd(), "content", "./test.txt"))
+		await import(path.join(process.cwd(), "content", "foo/bar.txt"))
 	).default;
 	const ComponentMdx = (
 		await import(path.join(process.cwd(), "content", "./test.mdx"))
 	).default;
 	const ComponentMd = (
-		await import(path.join(process.cwd(), "content", "./test.md"))
+		await import(path.join(process.cwd(), "content", "tests/content.md"))
 	).default;
 
 	const contentText = (ComponentText as unknown as Array<string>).join("\n");
