@@ -12,8 +12,11 @@ if (task == null) {
 }
 
 const tasks: Record<string, { file: string }> = {
-	dev: {
+	render: {
 		file: "./renderDemo.tsx",
+	},
+	tree: {
+		file: "./tree.ts",
 	},
 };
 
