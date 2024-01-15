@@ -11,12 +11,11 @@ if (task == null) {
 	process.exit(1);
 }
 
-const tasks: Record<string, { file: string }> = {
-	render: {
-		file: "./renderDemo.tsx",
-	},
-	tree: {
-		file: "./tree.ts",
+type Task = { source: string };
+
+const tasks: Record<string, Task> = {
+	dev: {
+		source: "./renderDemo",
 	},
 };
 
@@ -29,7 +28,7 @@ if (!(task in tasks)) {
 // plugin(mdx());
 plugin(mdxLoader);
 
-import(tasks[task].file)
+import(tasks[task].source)
 	.then((mod) => mod.default())
 	.catch((error) => {
 		console.error(error);
