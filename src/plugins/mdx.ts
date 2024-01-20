@@ -1,6 +1,7 @@
 import type { BunFile, BunPlugin, OnLoadArgs, OnLoadResult } from "bun";
 import path from "path";
 import { parseMarkdownToHtml, parseTextToHtml } from "../util/mdx";
+import type { MDXModule, MDXProps } from "mdx/types";
 
 async function parseContent(file: BunFile) {
 	const pathData = path.parse(String(file.name));
@@ -8,8 +9,8 @@ async function parseContent(file: BunFile) {
 	if (pathData.ext === ".txt") {
 		const content = await file.text();
 		return {
-			default: parseTextToHtml(content),
-		};
+			default: (props: MDXProps) => parseTextToHtml(content, props),
+		} as MDXModule;
 	}
 
 	if (pathData.ext === ".md" || pathData.ext === ".mdx") {

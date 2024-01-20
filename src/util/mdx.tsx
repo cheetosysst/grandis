@@ -1,12 +1,13 @@
 import { Html, type PropsWithChildren } from "@kitajs/html";
 import { evaluate } from "@mdx-js/mdx";
+import type { MDXProps } from "mdx/types";
 
-export function parseTextToHtml(content: string) {
+export function parseTextToHtml(content: string, props: MDXProps) {
 	const result = content
 		.split("\n")
 		.filter((paragraph) => paragraph !== "")
 		.map((paragraph) => <p safe>{paragraph}</p>);
-	return result;
+	return <>{result}</>;
 }
 
 export function parseMarkdownToHtml(content: string) {
