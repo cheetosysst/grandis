@@ -3,7 +3,7 @@
 	"module": "index.ts",
 	"type": "module",
 	"scripts": {
-		"dev": "bun src/index.ts",
+		"dev": "bun --hot run src/index.ts dev",
 		"lint": "bunx @biomejs/biome lint .",
 		"format": "bunx @biomejs/biome format . --write",
 		"xss": "xss-scan"

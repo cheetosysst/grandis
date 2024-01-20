@@ -2,7 +2,8 @@ import type { BunFile } from "bun";
 import fs from "node:fs";
 import path from "path";
 
-type TreeNode = Map<string, BunFile | TreeNode>;
+type ContentFile = { file: BunFile | TreeNode; path: string };
+type TreeNode = Map<string, ContentFile | TreeNode>;
 
 const SUPPORTED_FILETYPE = [".txt", ".md", ".mdx"];
 
@@ -19,9 +20,9 @@ function parseFilename(pathname: string) {
  * @param pathname Path of the current node
  * @returns Section of a file tree
  */
-export function getTreeNode(pathname: string): TreeNode | BunFile {
+export function getTreeNode(pathname: string): TreeNode | ContentFile {
 	const isDirectory = fs.statSync(pathname).isDirectory();
-	if (!isDirectory) return Bun.file(pathname);
+	if (!isDirectory) return { file: Bun.file(pathname), path: pathname };
 
 	const dirContents = fs.readdirSync(pathname);
 	const tree: TreeNode = new Map();

@@ -14,7 +14,7 @@ type Task = { source: string };
 
 const tasks: Record<string, Task> = {
 	dev: {
-		source: "./renderDemo",
+		source: "./dev",
 	},
 };
 
