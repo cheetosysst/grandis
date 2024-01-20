@@ -1,17 +1,6 @@
 import type { BunFile, BunPlugin, OnLoadArgs, OnLoadResult } from "bun";
 import path from "path";
-import { evaluate } from "@mdx-js/mdx";
-import { Html, type PropsWithChildren } from "@kitajs/html";
-import { parseTextToHtml } from "../util/mdx";
-
-function jsxHandler(
-	type: unknown,
-	props: PropsWithChildren,
-	key: string | undefined,
-) {
-	// biome-ignore lint/complexity/noBannedTypes: `type` is unknown
-	return Html.createElement(type as string | Function, props, props.children);
-}
+import { parseMarkdownToHtml, parseTextToHtml } from "../util/mdx";
 
 async function parseContent(file: BunFile) {
 	const pathData = path.parse(String(file.name));
@@ -24,13 +13,7 @@ async function parseContent(file: BunFile) {
 	}
 
 	if (pathData.ext === ".md" || pathData.ext === ".mdx") {
-		const content = file.text().then((text) => {
-			return evaluate(text, {
-				Fragment: Html.Fragment,
-				jsx: jsxHandler,
-				jsxs: jsxHandler,
-			});
-		});
+		const content = file.text().then(parseMarkdownToHtml);
 		return content;
 	}
 
