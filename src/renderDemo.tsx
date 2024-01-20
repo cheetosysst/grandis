@@ -1,5 +1,4 @@
 import "@kitajs/html/register";
-// import { renderToString } from "@kitajs/html/suspense";
 import path from "path";
 import fs from "fs";
 
@@ -16,12 +15,14 @@ async function dev() {
 		await import(path.join(process.cwd(), "content", "tests/content.md"))
 	).default;
 
-	const contentText = (ComponentText as unknown as Array<string>).join("\n");
-	const contentMdx = ComponentMdx({}).toString();
-	const contentMd = ComponentMd({}).toString();
+	console.log({
+		ComponentText: <ComponentText />,
+		ComponentMdx: <ComponentMdx />,
+		ComponentMd: <ComponentMd />,
+	});
 
 	console.log("============== Text ==============");
-	console.log(typeof contentText);
+	console.log(<ComponentText />);
 	console.log("============== MDX  ===============");
 	console.log(<ComponentMdx />);
 	console.log("=============== MD ===============");
@@ -32,17 +33,17 @@ async function dev() {
 	const fileText = Bun.file(
 		path.join(process.cwd(), "out", "text.html")
 	).writer();
-	fileText.write(contentText);
+	fileText.write(ComponentText({}).toString());
 	fileText.end();
 	const fileMdx = Bun.file(
 		path.join(process.cwd(), "out", "mdx.html")
 	).writer();
-	fileMdx.write(contentMdx);
+	fileMdx.write(ComponentMdx({}).toString());
 	fileMdx.end();
 	const fileMd = Bun.file(
 		path.join(process.cwd(), "out", "md.html")
 	).writer();
-	fileMd.write(contentMd);
+	fileMd.write(ComponentMd({}).toString());
 	fileMd.end();
 }
 

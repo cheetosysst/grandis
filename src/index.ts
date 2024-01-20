@@ -1,6 +1,5 @@
 import { plugin } from "bun";
 import mdxLoader from "./plugins/mdx";
-// import mdx from "@mdx-js/esbuild";
 import "@kitajs/html/register";
 
 const argv = Bun.argv;
