@@ -4,6 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "bun --hot run src/index.ts dev",
+		"build": "bun run src/index.ts build",
 		"lint": "bunx @biomejs/biome lint .",
 		"format": "bunx @biomejs/biome format . --write",
 		"xss": "xss-scan"

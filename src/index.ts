@@ -16,7 +16,10 @@ const tasks: Record<string, Task> = {
 	dev: {
 		source: "./dev",
 	},
-};
+	build: {
+		source: "./build",
+	},
+} as const;
 
 if (!(task in tasks)) {
 	console.error(

@@ -2,8 +2,8 @@ import type { BunFile } from "bun";
 import fs from "node:fs";
 import path from "path";
 
-type ContentFile = { file: BunFile | TreeNode; path: string };
-type TreeNode = Map<string, ContentFile | TreeNode>;
+export type ContentFile = { file: BunFile | TreeNode; path: string };
+export type TreeNode = Map<string, ContentFile | TreeNode>;
 
 const SUPPORTED_FILETYPE = [".txt", ".md", ".mdx"];
 
