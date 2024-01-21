@@ -1,6 +1,8 @@
 import { Html, type PropsWithChildren } from "@kitajs/html";
 import { evaluate } from "@mdx-js/mdx";
 import type { MDXProps } from "mdx/types";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
 export function parseTextToHtml(content: string, props: MDXProps) {
 	const result = content
@@ -15,6 +17,7 @@ export function parseMarkdownToHtml(content: string) {
 		Fragment: Html.Fragment,
 		jsx: jsxHandler,
 		jsxs: jsxHandler,
+		remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
 	});
 }
 
