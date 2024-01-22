@@ -27,7 +27,7 @@ if (!(task in tasks)) {
 	);
 }
 
-// plugin(mdx());
+
 plugin(mdxLoader);
 
 import(tasks[task].source)

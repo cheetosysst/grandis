@@ -5,6 +5,7 @@ import {
 } from "./util/structure";
 import path from "path";
 import fs from "fs";
+import { logger } from "./util/log";
 
 export default function build() {
 	console.log("🔨 Running build mode");
@@ -22,12 +23,10 @@ function generatePage(treeNode: ContentFile) {
 	const targetDirectory = path.join("out", relativePath);
 	const filename = `${parsedPath.name}.html`;
 
-	// TODO log function with env toggle
-	console.log(
-		`[\x1b[34mPAGE\x1b[0m] Generating page \x1b[32m"${path.join(
-			relativePath,
-			parsedPath.base
-		)}"\x1b[0m`
+	logger(
+		"info",
+		"BUILD",
+		`Generating page "${path.join(relativePath, parsedPath.base)}"`
 	);
 
 	import(treeNode.path).then((mod) => {
