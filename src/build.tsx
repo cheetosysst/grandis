@@ -9,6 +9,7 @@ export default function build() {
 }
 
 const contentDirectory = path.join(process.cwd(), "content");
+const outDirectory = path.join(process.cwd(), "out");
 
 const getPostPaths = () => {
 	const globResults = new Glob("*.mdx").scanSync(contentDirectory);
@@ -27,5 +28,5 @@ const tree = new Route("", {})
 	)
 	.route(new Route("about", {}).page(Page));
 
-fs.rmSync(contentDirectory, { recursive: true });
+fs.rmSync(outDirectory, { recursive: true });
 tree.build();
