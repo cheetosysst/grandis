@@ -40,6 +40,8 @@ function generatePage(treeNode: ContentFile) {
 		writer.write(content);
 		writer.end();
 	});
+
+	import("./layout");
 }
 
 function buildNode(treeNode: TreeNode) {
