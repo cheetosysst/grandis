@@ -1,6 +1,6 @@
 import type { Component } from "@kitajs/html";
-import { Glob } from "bun";
 import path from "path";
+import fs from "fs";
 import { logger } from "./util/log";
 import type { MDXModule } from "mdx/types";
 
@@ -19,6 +19,7 @@ type GroupParameters = Omit<RouteParameters<string>, "source"> & {
 };
 
 const contentDirectory = path.join(process.cwd(), "content");
+const outDirectory = path.join(process.cwd(), "out");
 
 export class Route<T extends string> {
 	public parent: Route<string> | undefined = undefined;
@@ -83,7 +84,10 @@ export class Route<T extends string> {
 	build() {
 		const fullpath = this.fullpath;
 
-		this.buildPage(fullpath, this.render);
+		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
+		const content = this.buildPage(this.render);
+		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
+		this.savePage(fullpath, content);
 
 		Promise.all(this.routes).then((routes) => {
 			for (const route of routes) {
@@ -95,31 +99,24 @@ export class Route<T extends string> {
 		return this;
 	}
 
-	private buildPage(fullpath: string, render: Component | undefined) {
+	private buildPage(render: Component | undefined) {
 		if (render == null) return "";
 
 		const content = render({}).toString();
-		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
-		console.log(content);
 		return content;
 	}
+
+	private savePage(fullpath: string, content: string) {
+		const pagePath = path.join(outDirectory, fullpath);
+		const filePath = path.join(pagePath, "index.html");
+		if (!fs.existsSync(pagePath)) {
+			fs.mkdirSync(pagePath);
+		}
+		const file = Bun.file(filePath);
+		const writer = file.writer();
+		writer.write(content);
+		writer.end();
+
+		return;
+	}
 }
-
-const getPostPaths = () => {
-	const globResults = new Glob("*.mdx").scanSync(contentDirectory);
-	return globResults;
-};
-const Page = () => Html.createElement("div", {});
-
-const tree = new Route("", { prefix: "blog" })
-	.page(Page)
-	.route(
-		new Route("post", {})
-			.page(Page)
-			.group(({ children }) => Html.createElement("div", {}, children), {
-				source: Array.from(getPostPaths()),
-			}),
-	)
-	.route(new Route("about", {}).page(Page));
-
-tree.build();

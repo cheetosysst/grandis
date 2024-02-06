@@ -1,53 +1,31 @@
-import {
-	generateTree,
-	type ContentFile,
-	type TreeNode,
-} from "./util/structure";
 import path from "path";
 import fs from "fs";
-import { logger } from "./util/log";
+import { Glob } from "bun";
+import { Route } from "./layout";
 
 export default function build() {
 	console.log("🔨 Running build mode");
-	const contentRoot = path.join(process.cwd(), "content");
-	const tree = generateTree(contentRoot);
-
-	buildNode(tree);
+	import("./layout");
 }
 
 const contentDirectory = path.join(process.cwd(), "content");
 
-function generatePage(treeNode: ContentFile) {
-	const parsedPath = path.parse(treeNode.path);
-	const relativePath = path.relative(contentDirectory, parsedPath.dir);
-	const targetDirectory = path.join("out", relativePath);
-	const filename = `${parsedPath.name}.html`;
+const getPostPaths = () => {
+	const globResults = new Glob("*.mdx").scanSync(contentDirectory);
+	return globResults;
+};
+const Page = () => Html.createElement("div", {});
 
-	logger(
-		"info",
-		"BUILD",
-		`Generating page "${path.join(relativePath, parsedPath.base)}"`
-	);
+const tree = new Route("", {})
+	.page(Page)
+	.route(
+		new Route("post", {})
+			.page(Page)
+			.group(({ children }) => Html.createElement("div", {}, children), {
+				source: Array.from(getPostPaths()),
+			})
+	)
+	.route(new Route("about", {}).page(Page));
 
-	import(treeNode.path).then((mod) => {
-		const Component = mod.default;
-
-		const content = Component({}).toString() as string;
-
-		fs.mkdirSync(targetDirectory, { recursive: true });
-		const file = Bun.file(path.join(targetDirectory, filename));
-		const writer = file.writer();
-		writer.write(content);
-		writer.end();
-	});
-
-	import("./layout");
-}
-
-function buildNode(treeNode: TreeNode) {
-	fs.rmSync(path.join(process.cwd(), "out", "*"), { recursive: true });
-	if (!(treeNode instanceof Map)) return generatePage(treeNode);
-	for (const [key, item] of treeNode) {
-		buildNode(item as TreeNode);
-	}
-}
+fs.rmSync(contentDirectory, { recursive: true });
+tree.build();
