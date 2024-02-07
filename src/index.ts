@@ -2,6 +2,8 @@ import { plugin } from "bun";
 import mdxLoader from "./plugins/mdx";
 import "@kitajs/html/register";
 
+import buildTask from "./build";
+
 const argv = Bun.argv;
 const task = argv.at(2);
 
@@ -10,29 +12,10 @@ if (task == null) {
 	process.exit(1);
 }
 
-type Task = { source: string };
-
-const tasks: Record<string, Task> = {
-	dev: {
-		source: "./dev",
-	},
-	build: {
-		source: "./build",
-	},
-} as const;
-
-if (!(task in tasks)) {
-	console.error(
-		`Task "${task}" not supported. Please refer to our documentation.`,
-	);
-}
-
-
 plugin(mdxLoader);
 
-import(tasks[task].source)
-	.then((mod) => mod.default())
-	.catch((error) => {
-		console.error(error);
-		process.exit(-1);
-	});
+if (task === "build") {
+	buildTask();
+} else {
+	throw new Error(`Not supported task "${task}"`);
+}
