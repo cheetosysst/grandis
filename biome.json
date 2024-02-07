@@ -18,7 +18,7 @@
 	"formatter": {
 		"indentWidth": 4,
 		"indentStyle": "tab",
-		"include": ["index.ts", "src/"],
-		"ignore": ["node_modules"]
+		"include": ["index.ts", "src/", "layout/"],
+		"ignore": ["node_modules", "out/"]
 	}
 }

@@ -1,32 +1,30 @@
 import path from "path";
 import fs from "fs";
-import { Glob } from "bun";
-import { Route } from "./layout";
+import config from "../grandis.toml";
+import type { Route } from "./layout";
+
+const cwd = process.cwd();
+export const layoutPath = path.join(cwd, "layout");
+export const contentDirectory = path.join(cwd, "content");
+export const outDirectory = path.join(cwd, "out");
+export const selectedLayoutPath = path.join(
+	layoutPath,
+	config.style.layout || "layout"
+);
 
 export default function build() {
 	console.log("🔨 Running build mode");
-	import("./layout");
+
+	if (
+		!fs.existsSync(selectedLayoutPath) ||
+		!fs.statSync(selectedLayoutPath).isDirectory()
+	) {
+		throw new Error(`Theme doesn't exist on path "${selectedLayoutPath}."`);
+	}
+
+	import(selectedLayoutPath).then((mod) => {
+		const route = mod.default as Route<string>;
+		fs.rmSync(outDirectory, { recursive: true });
+		route.build();
+	});
 }
-
-const contentDirectory = path.join(process.cwd(), "content");
-const outDirectory = path.join(process.cwd(), "out");
-
-const getPostPaths = () => {
-	const globResults = new Glob("*.mdx").scanSync(contentDirectory);
-	return globResults;
-};
-const Page = () => Html.createElement("div", {});
-
-const tree = new Route("", {})
-	.page(Page)
-	.route(
-		new Route("post", {})
-			.page(Page)
-			.group(({ children }) => Html.createElement("div", {}, children), {
-				source: Array.from(getPostPaths()),
-			})
-	)
-	.route(new Route("about", {}).page(Page));
-
-fs.rmSync(outDirectory, { recursive: true });
-tree.build();

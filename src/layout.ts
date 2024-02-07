@@ -86,7 +86,6 @@ export class Route<T extends string> {
 
 		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
 		const content = this.buildPage(this.render);
-		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
 		this.savePage(fullpath, content);
 
 		Promise.all(this.routes).then((routes) => {
