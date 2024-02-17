@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import config from "../grandis.toml";
-import type { Route } from "./layout";
+import type { Route } from "./route";
 import { logger } from "./util/log";
 
 const cwd = process.cwd();
