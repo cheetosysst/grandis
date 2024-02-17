@@ -48,7 +48,7 @@ export class Route<T extends string> {
 			throw new Error(`Missing pages source under "${this.fullpath}"`);
 		}
 
-		const group = params.source.map((route) =>
+		const group = Array.from(new Set(params.source)).map((route) =>
 			this.generateGroupRoute(route, render)
 		);
 		this.routes = this.routes.concat(group);
