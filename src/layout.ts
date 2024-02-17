@@ -1,6 +1,5 @@
 import type { Component } from "@kitajs/html";
 import path from "path";
-import fs from "fs";
 import { logger } from "./util/log";
 import type { MDXModule } from "mdx/types";
 
@@ -14,6 +13,7 @@ type RouteParameters<T extends string> = {
 	source: string;
 	directory: string;
 	out: string;
+	save: (fullpath: string, content: string) => void;
 };
 
 type GroupParameters = Omit<RouteParameters<string>, "source"> & {
@@ -21,7 +21,6 @@ type GroupParameters = Omit<RouteParameters<string>, "source"> & {
 };
 
 const contentDirectory = path.join(process.cwd(), "content");
-const outDirectory = path.join(process.cwd(), "out");
 
 export class Route<T extends string> {
 	public parent: Route<string> | undefined = undefined;
@@ -36,6 +35,8 @@ export class Route<T extends string> {
 	}
 
 	route<S extends string>(subroute: Route<S>) {
+		subroute.params.save ??= this.params.save;
+
 		this.routes.push(subroute);
 		return this;
 	}
@@ -68,8 +69,11 @@ export class Route<T extends string> {
 		);
 		const module = await (import(fullpath) as Promise<MDXModule>);
 		const filename = path.parse(pathname).name;
+		const params: Partial<RouteParameters<string>> = {
+			save: this.params.save,
+		};
 
-		return new Route(filename, {}).page(() =>
+		return new Route(filename, params).page(() =>
 			render({ children: [module.default({})] })
 		);
 	}
@@ -85,8 +89,13 @@ export class Route<T extends string> {
 		const fullpath = this.fullpath;
 
 		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
+
+		if (this.params.save == null) {
+			throw new Error(`Missing page save dependency on "${fullpath}".`);
+		}
+
 		const content = this.buildPage(this.render);
-		this.savePage(fullpath, content);
+		this.params.save(fullpath, content);
 
 		Promise.all(this.routes).then((routes) => {
 			for (const route of routes) {
@@ -105,20 +114,7 @@ export class Route<T extends string> {
 		return content;
 	}
 
-	private savePage(fullpath: string, content: string) {
-		const pagePath = path.join(
-			this.params.directory ?? outDirectory,
-			fullpath
-		);
-		const filePath = path.join(pagePath, "index.html");
-		if (!fs.existsSync(pagePath)) {
-			fs.mkdirSync(pagePath);
-		}
-		const file = Bun.file(filePath);
-		const writer = file.writer();
-		writer.write(content);
-		writer.end();
-
-		return;
+	saveHandler(save: NonNullable<typeof this.params.save>) {
+		this.params.save = save;
 	}
 }

@@ -30,7 +30,23 @@ export default function build() {
 			`Loading layout ${selectedLayoutPath}`
 		);
 		const route = mod.default as Route<string>;
+		route.saveHandler(savePage);
+
 		fs.rmSync(outDirectory, { recursive: true });
 		route.build();
 	});
+}
+
+function savePage(fullpath: string, content: string) {
+	const pagePath = path.join(outDirectory, fullpath);
+	const filePath = path.join(pagePath, "index.html");
+	if (!fs.existsSync(pagePath)) {
+		fs.mkdirSync(pagePath);
+	}
+	const file = Bun.file(filePath);
+	const writer = file.writer();
+	writer.write(content);
+	writer.end();
+
+	return;
 }
