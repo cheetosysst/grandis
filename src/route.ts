@@ -7,15 +7,12 @@ type PartialRoute<T extends string> = T extends `${string}/${string}`
 	? never
 	: T;
 
-type RouteParameters<T extends string> = {
+export type RouteParameters<T extends string> = {
 	prefix: PartialRoute<T>;
-	name: string;
-	directory: string;
-	out: string;
 	save: (fullpath: string, content: string) => void;
 };
 
-type GroupParameters = RouteParameters<string> & {
+export type GroupParameters = RouteParameters<string> & {
 	source: Array<string>;
 };
 
@@ -109,5 +106,7 @@ export class Route<T extends string> {
 
 	saveHandler(save: NonNullable<typeof this.params.save>) {
 		this.params.save = save;
+
+		return this;
 	}
 }
