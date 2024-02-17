@@ -10,13 +10,12 @@ type PartialRoute<T extends string> = T extends `${string}/${string}`
 type RouteParameters<T extends string> = {
 	prefix: PartialRoute<T>;
 	name: string;
-	source: string;
 	directory: string;
 	out: string;
 	save: (fullpath: string, content: string) => void;
 };
 
-type GroupParameters = Omit<RouteParameters<string>, "source"> & {
+type GroupParameters = RouteParameters<string> & {
 	source: Array<string>;
 };
 
