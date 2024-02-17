@@ -24,7 +24,9 @@ const route = new Route("", { prefix: ""})
 			.page(() => <div>Post page</div>)
 			.group(
 				({ children })=> <div>{ children }</div>,
-				{ source: ["./post1.md", "./post2.mdx", "./post1.txt"] }
+				{ source: [
+					"/absolute/path/to/file"
+				] }
 			)
 	);
 ```
