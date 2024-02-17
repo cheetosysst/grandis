@@ -1,4 +1,4 @@
-import { Route } from "../../src/layout";
+import { Route } from "../../src/route";
 import Layout from "./components/default.layout";
 
 const route = new Route("", {}).page(() => {
