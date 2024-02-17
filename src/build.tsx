@@ -14,7 +14,7 @@ export const selectedLayoutPath = path.join(
 );
 
 export default function build() {
-	console.log("🔨 Running build mode");
+	console.log("🔨 Running build");
 
 	if (
 		!fs.existsSync(selectedLayoutPath) ||
