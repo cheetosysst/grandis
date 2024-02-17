@@ -12,6 +12,8 @@ type RouteParameters<T extends string> = {
 	prefix: PartialRoute<T>;
 	name: string;
 	source: string;
+	directory: string;
+	out: string;
 };
 
 type GroupParameters = Omit<RouteParameters<string>, "source"> & {
@@ -49,7 +51,7 @@ export class Route<T extends string> {
 		}
 
 		const group = params.source.map((route) =>
-			this.generateGroupRoute(route, render),
+			this.generateGroupRoute(route, render)
 		);
 		this.routes = this.routes.concat(group);
 
@@ -58,19 +60,17 @@ export class Route<T extends string> {
 
 	private async generateGroupRoute(
 		pathname: string,
-		render: Component<Partial<{ content: Component }>>,
+		render: Component<Partial<{ content: Component }>>
 	) {
-		const fullpath = path.join(contentDirectory, pathname);
-		const module = await (import(fullpath) as Promise<MDXModule>).catch(
-			(e) => {
-				console.error(e);
-				throw new Error(`Cannot load file on path "${pathname}"`);
-			},
+		const fullpath = path.join(
+			this.params.directory ?? contentDirectory,
+			pathname
 		);
+		const module = await (import(fullpath) as Promise<MDXModule>);
 		const filename = path.parse(pathname).name;
 
 		return new Route(filename, {}).page(() =>
-			render({ children: [module.default({})] }),
+			render({ children: [module.default({})] })
 		);
 	}
 
@@ -106,7 +106,10 @@ export class Route<T extends string> {
 	}
 
 	private savePage(fullpath: string, content: string) {
-		const pagePath = path.join(outDirectory, fullpath);
+		const pagePath = path.join(
+			this.params.directory ?? outDirectory,
+			fullpath
+		);
 		const filePath = path.join(pagePath, "index.html");
 		if (!fs.existsSync(pagePath)) {
 			fs.mkdirSync(pagePath);
