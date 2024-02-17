@@ -4,18 +4,15 @@ Grandis is a minimal static site generator template. It provides routing support
 
 Everything in this repo is subject to change.
 
-## Planned feature
-
-[ ] HTMX integration
-
 ## Getting Started
 
 ```bash
-bun install
-bun run build
+bun install grandis @kitajs/html @kitajs/ts-html-plugin
 ```
 
 ```tsx
+import "@kitajs/html/register";
+
 const route = new Route("", { prefix: ""})
 	.page(() => <div>Index page</div>)
 	.route(

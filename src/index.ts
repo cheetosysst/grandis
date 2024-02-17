@@ -1,5 +1,5 @@
 import { plugin } from "bun";
-import mdxLoader from "./plugins/mdx";
+import mdxLoader from "./plugins/markdown";
 import "@kitajs/html/register";
 
 import buildTask from "./build";
