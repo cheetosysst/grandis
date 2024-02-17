@@ -20,8 +20,6 @@ type GroupParameters = Omit<RouteParameters<string>, "source"> & {
 	source: Array<string>;
 };
 
-const contentDirectory = path.join(process.cwd(), "content");
-
 export class Route<T extends string> {
 	public parent: Route<string> | undefined = undefined;
 	private params: Partial<RouteParameters<T>> = {};
@@ -63,11 +61,7 @@ export class Route<T extends string> {
 		pathname: string,
 		render: Component<Partial<{ content: Component }>>
 	) {
-		const fullpath = path.join(
-			this.params.directory ?? contentDirectory,
-			pathname
-		);
-		const module = await (import(fullpath) as Promise<MDXModule>);
+		const module = await (import(pathname) as Promise<MDXModule>);
 		const filename = path.parse(pathname).name;
 		const params: Partial<RouteParameters<string>> = {
 			save: this.params.save,
