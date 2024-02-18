@@ -10,6 +10,7 @@ type PartialRoute<T extends string> = T extends `${string}/${string}`
 export type RouteParameters<T extends string> = {
 	prefix: PartialRoute<T>;
 	save: (fullpath: string, content: string) => void;
+	build: (render: Component | undefined) => string;
 };
 
 export type GroupParameters = RouteParameters<string> & {
@@ -30,6 +31,7 @@ export class Route<T extends string> {
 
 	route<S extends string>(subroute: Route<S>) {
 		subroute.params.save ??= this.params.save;
+		subroute.params.build ??= this.params.build;
 
 		this.routes.push(subroute);
 		return this;
@@ -61,6 +63,7 @@ export class Route<T extends string> {
 		const filename = path.parse(pathname).name;
 		const params: Partial<RouteParameters<string>> = {
 			save: this.params.save,
+			build: this.params.build,
 		};
 
 		return new Route(filename, params).page(() =>
@@ -83,8 +86,11 @@ export class Route<T extends string> {
 		if (this.params.save == null) {
 			throw new Error(`Missing page save dependency on "${fullpath}".`);
 		}
+		if (this.params.build == null) {
+			throw new Error(`Missing page build dependency on "${fullpath}".`);
+		}
 
-		const content = this.buildPage(this.render);
+		const content = this.params.build(this.render);
 		this.params.save(fullpath, content);
 
 		Promise.all(this.routes).then((routes) => {
@@ -97,16 +103,13 @@ export class Route<T extends string> {
 		return this;
 	}
 
-	private buildPage(render: Component | undefined) {
-		if (render == null) return "";
-
-		const content = render({}).toString();
-		return content;
+	buildHandler(build: NonNullable<typeof this.params.build>) {
+		this.params.build = build;
+		return this;
 	}
 
 	saveHandler(save: NonNullable<typeof this.params.save>) {
 		this.params.save = save;
-
 		return this;
 	}
 }
