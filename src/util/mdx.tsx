@@ -25,7 +25,7 @@ function jsxHandler(
 	type: unknown,
 	props: PropsWithChildren,
 	// added for compatibility but ignored at runtime
-	key: string | undefined
+	key: string | undefined,
 ) {
 	// biome-ignore lint/complexity/noBannedTypes: `type` is unknown
 	return Html.createElement(type as string | Function, props, props.children);

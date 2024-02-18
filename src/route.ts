@@ -47,7 +47,7 @@ export class Route<T extends string> {
 		}
 
 		const group = Array.from(new Set(params.source)).map((route) =>
-			this.generateGroupRoute(route, render)
+			this.generateGroupRoute(route, render),
 		);
 		this.routes = this.routes.concat(group);
 
@@ -56,7 +56,7 @@ export class Route<T extends string> {
 
 	private async generateGroupRoute(
 		pathname: string,
-		render: Component<Partial<{ content: Component }>>
+		render: Component<Partial<{ content: Component }>>,
 	) {
 		const module = await (import(pathname) as Promise<MDXModule>);
 		const filename = path.parse(pathname).name;
@@ -66,7 +66,7 @@ export class Route<T extends string> {
 		};
 
 		return new Route(filename, params).page(() =>
-			render({ children: [module.default({})] })
+			render({ children: [module.default({})] }),
 		);
 	}
 

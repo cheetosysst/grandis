@@ -10,7 +10,7 @@ export const contentDirectory = path.join(cwd, "content");
 export const outDirectory = path.join(cwd, "out");
 export const selectedLayoutPath = path.join(
 	layoutPath,
-	config.style.layout || "default"
+	config.style.layout || "default",
 );
 
 export default function build() {
