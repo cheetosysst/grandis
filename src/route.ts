@@ -1,6 +1,5 @@
 import type { Component } from "@kitajs/html";
 import path from "path";
-import { logger } from "./util/log";
 import type { MDXModule } from "mdx/types";
 
 type PartialRoute<T extends string> = T extends `${string}/${string}`
@@ -80,8 +79,6 @@ export class Route<T extends string> {
 
 	build() {
 		const fullpath = this.fullpath;
-
-		logger("debug", import.meta.file || "", `building page: ${fullpath}`);
 
 		if (this.params.save == null) {
 			throw new Error(`Missing page save dependency on "${fullpath}".`);

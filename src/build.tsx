@@ -2,7 +2,6 @@ import path from "path";
 import fs from "fs";
 import config from "../grandis.toml";
 import type { Route } from "./route";
-import { logger } from "./util/log";
 import type { Component } from "@kitajs/html";
 
 const cwd = process.cwd();
@@ -25,11 +24,6 @@ export default function build() {
 	}
 
 	import(selectedLayoutPath).then((mod) => {
-		logger(
-			"debug",
-			import.meta.file,
-			`Loading layout ${selectedLayoutPath}`
-		);
 		const route = mod.default as Route<string>;
 		route.buildHandler(buildPage).saveHandler(savePage);
 
@@ -38,14 +32,14 @@ export default function build() {
 	});
 }
 
-function buildPage(render: Component | undefined) {
+export function buildPage(render: Component | undefined) {
 	if (render == null) return "";
 
 	const content = render({}).toString();
 	return content;
 }
 
-function savePage(fullpath: string, content: string) {
+export function savePage(fullpath: string, content: string) {
 	const pagePath = path.join(outDirectory, fullpath);
 	const filePath = path.join(pagePath, "index.html");
 	if (!fs.existsSync(pagePath)) {

@@ -1,6 +1,6 @@
 # Grandis
 
-Grandis is a minimal static site generator template. It provides routing support, [kitajs/html](https://github.com/kitajs/html) powered JSX and rendering support, and that's it.
+Grandis is a minimal static site generator template. It provides routing support, with [kitajs/html](https://github.com/kitajs/html) powered JSX rendering.
 
 Grandis uses Bun's file API for loading file, so it doesn't work on other runtime.
 
@@ -9,10 +9,11 @@ Everything in this repo is subject to change.
 ## Getting Started
 
 ```bash
-bun install grandis @kitajs/html @kitajs/ts-html-plugin
+bun install grandis
 ```
 
 ```tsx
+// This is required to register kitajs types, see more at @kitajs/html's documentation. 
 import "@kitajs/html/register";
 
 const route = new Route("", { prefix: ""})
@@ -29,6 +30,8 @@ const route = new Route("", { prefix: ""})
 				{ source: [ "/absolute/path/to/file" ] }
 			)
 	);
+
+route.saveHandler(save).buildHandler(build);
 ```
 
 ## API
@@ -117,7 +120,9 @@ Render the route's page, calls the `save` handler, and calls subroutes' `build` 
 
 ##### `saveHandler(save: NonNullable<typeof this.params.save>): this`
 
-Assign a `save` handler to the current route and all subroutes. Unless you have a special use case, you can copy&paste the example code.
+Assign a `save` handler to the current route and all subroutes. Unless you have a special usecase, you can copy&paste the example code.
+
+The handler is automatically passed down the line, unless a subroute overwrites it.
 
 ```tsx
 const outDirectory = path.join(process.cwd(), "out");
@@ -135,10 +140,26 @@ route.saveHandler((fullpath, content) => {
 });
 ```
 
+##### `buildHandler(build: NonNullable<typeof this.params.build>): this`
+
+Assigns a `build` handler that's defines how the route and all subroutes is rendered. Unless you have a special usecase, you can copy&paste the example code.
+
+The handler is automatically passed down the line, unless a subroute overwrites it.
+
+```tsx
+route.buildHandler((render: Component | undefined) => {
+	if (render == null) return "";
+
+	const content = render({}).toString();
+	return content;
+});
+```
 
 ## Plugin
 
-Make sure to preload the custom MDX plugin before you start. See [bunfig#preload](https://bun.sh/docs/runtime/bunfig#preload) for more informantion.
+If you chose to use the save/build handler examples we provided, make sure to preload the custom MDX plugin before you start. See [bunfig#preload](https://bun.sh/docs/runtime/bunfig#preload) for more informantion.
+
+This plugin loads `@mdx-js/mdx` with a custom loader in Bun's format and use's @kitajs/html's API for rendering. It's fairly simple to implement so we encourage you to write one that suits your particular need.
 
 ```toml
 # bunfig.toml
